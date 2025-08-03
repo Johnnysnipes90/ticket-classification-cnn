@@ -7,6 +7,39 @@ Efficient handling of service desk tickets is crucial for organizations. This pr
 - Debt Collection
 - Money Transfers
 - Others
+# ✅ Local Setup Instructions
+1. 📁 Folder Structure
+ticket-classification-cnn/
+```
+│
+├── data/
+│   ├── words.json
+│   ├── text.json
+│   └── labels.npy
+│
+├── model/
+│   └── ticket_classifier.pth        
+│
+├── ticket_classifier.py              # Main script
+├── requirements.txt
+└── README.md
+```
+
+2. 🐍 requirements.txt
+Create a file named requirements.txt with the following:
+```
+torch>=2.0.0
+torchmetrics>=0.11.0
+scikit-learn
+numpy
+pandas
+nltk
+```
+
+Install it using:
+```
+pip install -r requirements.txt
+```
 
 ## 💡 Project Highlights
 
