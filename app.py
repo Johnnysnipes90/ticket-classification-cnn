@@ -8,28 +8,46 @@ import torch.nn.functional as F
 import numpy as np
 import nltk
 from nltk.tokenize import word_tokenize
-from PIL import Image
+import plotly.express as px
 
-# --- INITIAL SETUP ---
-st.set_page_config(page_title="Ticket Classifier", layout="centered", page_icon="🧾")
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="AI Ticket Classifier", layout="centered", page_icon="🧾")
 
-# Optional custom header image
+# --- STYLING ---
+custom_css = """
+<style>
+    .stButton > button {
+        background-color: #4CAF50;
+        color: white;
+        border: None;
+        border-radius: 5px;
+        padding: 0.5em 1.5em;
+        font-size: 16px;
+    }
+    .stTextArea textarea {
+        border-radius: 10px;
+        font-size: 16px;
+    }
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
+# --- HEADER ---
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>🧾 Service Desk Ticket Classifier</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Predict the category of customer complaints using a deep learning model (CNN)</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Instantly categorize support tickets using a powerful AI model</p>", unsafe_allow_html=True)
 st.divider()
 
-# Load vocab
+# --- LOAD RESOURCES ---
 with open("data/words.json", "r") as f:
     words = json.load(f)
-word2idx = {word: i+1 for i, word in enumerate(words)}  # Reserve 0 for padding
+word2idx = {word: i+1 for i, word in enumerate(words)}  # Padding = 0
 
-# Load label map
 with open("data/labels.json", "r") as f:
     label_map = json.load(f)
 
 nltk.download('punkt', quiet=True)
 
-# --- MODEL DEFINITION ---
+# --- MODEL CLASS ---
 class TicketClassifier(nn.Module):
     def __init__(self, vocab_size, embed_dim, num_classes):
         super(TicketClassifier, self).__init__()
@@ -43,16 +61,17 @@ class TicketClassifier(nn.Module):
         x = x.mean(dim=2)
         return self.fc(x)
 
-# Load trained model
-vocab_size = len(word2idx) + 1
-embed_dim = 64
-num_classes = len(label_map)
+# --- LOAD MODEL ---
+@st.cache_resource
+def load_model():
+    model = TicketClassifier(len(word2idx)+1, 64, len(label_map))
+    model.load_state_dict(torch.load("model/ticket_classifier.pth", map_location="cpu"))
+    model.eval()
+    return model
 
-model = TicketClassifier(vocab_size, embed_dim, num_classes)
-model.load_state_dict(torch.load("model/ticket_classifier.pth", map_location="cpu"))
-model.eval()
+model = load_model()
 
-# --- HELPER FUNCTIONS ---
+# --- UTILITIES ---
 def pad_input(tokens, seq_len=50):
     features = np.zeros((seq_len,), dtype=int)
     features[-len(tokens):] = np.array(tokens[:seq_len])
@@ -64,39 +83,34 @@ def preprocess(text):
     return torch.tensor([pad_input(token_ids)], dtype=torch.long)
 
 # --- MAIN INTERFACE ---
-st.markdown("### ✍️ Enter Ticket Text")
-user_input = st.text_area("Type or paste a customer complaint:", height=150, placeholder="e.g., I was charged twice on my credit card...")
+st.markdown("### 💬 Enter Ticket Text")
+user_input = st.text_area("What did the customer say?", height=150, placeholder="e.g., I can't log into my account and need help resetting my password...")
 
-col1, col2 = st.columns([1, 3])
+col1, col2 = st.columns([1, 5])
 with col1:
-    submit = st.button("🔍 Classify")
+    if st.button("🔍 Classify"):
+        if not user_input.strip():
+            st.warning("🚫 Please enter a valid customer complaint.")
+        else:
+            input_tensor = preprocess(user_input)
+            with torch.no_grad():
+                output = model(input_tensor)
+                probs = F.softmax(output, dim=1).squeeze()
+                pred_index = torch.argmax(probs).item()
+                pred_label = label_map[str(pred_index)]
 
-if submit:
-    if not user_input.strip():
-        st.warning("⚠️ Please enter a complaint or ticket text.")
-    else:
-        input_tensor = preprocess(user_input)
-        with torch.no_grad():
-            logits = model(input_tensor)
-            probs = F.softmax(logits, dim=1).squeeze()
-            pred_index = torch.argmax(probs).item()
-            pred_label = label_map[str(pred_index)]
+            st.success(f"🎯 **Predicted Category:** `{pred_label}`")
 
-        st.success(f"🎯 **Predicted Category:** `{pred_label}`")
-        st.markdown("#### 🔢 Prediction Confidence")
-        confidence_df = {
-            label_map[str(i)]: float(probs[i].item()) for i in range(len(label_map))
-        }
-        st.bar_chart(confidence_df)
+            st.markdown("#### 📊 Confidence Scores")
+            conf_data = {
+                "Category": [label_map[str(i)] for i in range(len(label_map))],
+                "Confidence": [float(p) for p in probs]
+            }
+            fig = px.bar(conf_data, x="Category", y="Confidence", color="Category",
+                         title="Model Prediction Confidence", labels={"Confidence": "Probability"},
+                         height=400, width=600)
+            st.plotly_chart(fig, use_container_width=True)
 
-        st.markdown("---")
-        with st.expander("📄 Model Summary"):
-            st.text(model)
-
-        with st.expander("ℹ️ About this App"):
-            st.markdown("""
-            - Built with PyTorch and Streamlit
-            - Uses a 1D Convolutional Neural Network
-            - Trained on tokenized customer complaint texts
-            - Pads/truncates inputs to length 50
-            """)
+# --- FOOTER ---
+st.markdown("---")
+st.markdown("<p style='text-align: center; font-size: 0.9em;'>Built with ❤️ John Olalemi using PyTorch & Streamlit</p>", unsafe_allow_html=True)
