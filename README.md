@@ -18,9 +18,9 @@ ticket-classification-cnn/
 │   └── labels.npy
 │
 ├── model/
-│   └── ticket_classifier.pth         # (you will save this)
+│   └── ticket_classifier.pth        
 │
-├── ticket_classifier.py              # your main script
+├── ticket_classifier.py              # Main script
 ├── requirements.txt
 └── README.md
 ```
