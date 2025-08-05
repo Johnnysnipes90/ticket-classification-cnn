@@ -11,10 +11,9 @@ from nltk.tokenize import word_tokenize
 import plotly.express as px
 
 # --- Ensure 'punkt' tokenizer is available ---
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
+nltk.data.path.append("nltk_data")  # Use local tokenizer
+from nltk.tokenize import word_tokenize
+
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="AI Ticket Classifier", layout="centered", page_icon="🧾")
