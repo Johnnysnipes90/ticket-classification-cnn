@@ -4,17 +4,17 @@ import streamlit as st
 import json
 import torch
 import torch.nn as nn
-import torch.nn.functional as F   
+import torch.nn.functional as F
 import numpy as np
 import nltk
 from nltk.tokenize import word_tokenize
 import plotly.express as px
 
-# Make sure punkt is available
+# --- Ensure 'punkt' tokenizer is available ---
 try:
     nltk.data.find("tokenizers/punkt")
 except LookupError:
-    nltk.download("punkt", quiet=True)
+    nltk.download("punkt")
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="AI Ticket Classifier", layout="centered", page_icon="🧾")
@@ -51,8 +51,6 @@ word2idx = {word: i+1 for i, word in enumerate(words)}  # Padding = 0
 with open("data/labels.json", "r") as f:
     label_map = json.load(f)
 
-nltk.download('punkt', quiet=True)
-
 # --- MODEL CLASS ---
 class TicketClassifier(nn.Module):
     def __init__(self, vocab_size, embed_dim, num_classes):
@@ -70,7 +68,7 @@ class TicketClassifier(nn.Module):
 # --- LOAD MODEL ---
 @st.cache_resource
 def load_model():
-    model = TicketClassifier(len(word2idx)+1, 64, len(label_map))
+    model = TicketClassifier(len(word2idx) + 1, 64, len(label_map))
     model.load_state_dict(torch.load("model/ticket_classifier.pth", map_location="cpu"))
     model.eval()
     return model
@@ -119,4 +117,4 @@ with col1:
 
 # --- FOOTER ---
 st.markdown("---")
-st.markdown("<p style='text-align: center; font-size: 0.9em;'>Built with ❤️ John Olalemi using PyTorch & Streamlit</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 0.9em;'>Built with ❤️ by John Olalemi using PyTorch & Streamlit</p>", unsafe_allow_html=True)
