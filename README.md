@@ -88,8 +88,8 @@ pip install -r requirements.txt
 
 ## 🧾 Example Output
 
+```txt
 ```
-txt
 Epoch: 1, Loss: 0.00385
 Epoch: 2, Loss: 0.00153
 Epoch: 3, Loss: 0.00079
