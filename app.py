@@ -6,12 +6,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-import nltk
-from nltk.tokenize import word_tokenize
+import re
 import plotly.express as px
-
-# --- Tell NLTK to use local punkt tokenizer ---
-nltk.data.path.insert(0, "nltk_data")  # Add your ./nltk_data first in search path
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="AI Ticket Classifier", layout="centered", page_icon="🧾")
@@ -78,7 +74,7 @@ def pad_input(tokens, seq_len=50):
     return features
 
 def preprocess(text):
-    tokens = word_tokenize(text.lower())
+    tokens = re.findall(r"\w+", text.lower())  # Replace nltk.word_tokenize
     token_ids = [word2idx.get(token, 0) for token in tokens]
     return torch.tensor([pad_input(token_ids)], dtype=torch.long)
 
