@@ -25,7 +25,37 @@ ticket-classification-cnn/
 └── README.md
 ```
 
-2. 🐍 requirements.txt
+
+## 📌 Features
+- Text classification using CNN
+- Custom vocabulary handling and preprocessing
+- Streamlit frontend with confidence bar chart
+- Live model predictions
+
+## 🧠 Model Architecture
+- Embedding Layer
+- 1D Convolution + ReLU
+- Global Average Pooling
+- Fully Connected Layer
+
+## 💡 How It Works
+1. Tokenize the input ticket text.
+2. Convert tokens to indices using a pretrained vocabulary.
+3. Pad/truncate sequence to fixed length.
+4. Pass input through a trained CNN model.
+5. Display predicted category and confidence scores.
+
+## ⚙️ Installation
+
+```bash
+git clone https://github.com/yourusername/ticket-classifier-cnn.git
+cd ticket-classifier-cnn
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+
+2. 🐍 requirements.txt (Dependencies)
 Create a file named requirements.txt with the following:
 ```
 torch>=2.0.0
@@ -65,3 +95,4 @@ Epoch: 3, Loss: 0.00079
 Accuracy: 0.7969
 Precision (per class): [0.62, 0.76, 0.80, 0.87, 0.95]
 Recall (per class):    [0.73, 0.71, 0.88, 0.79, 0.84]
+```
