@@ -7,13 +7,20 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import nltk
-from nltk.tokenize import word_tokenize
+
 import plotly.express as px
 
 # --- Ensure 'punkt' tokenizer is available ---
-nltk.data.path.append("nltk_data")  # Use local tokenizer
-from nltk.tokenize import word_tokenize
+import nltk
+nltk.data.path.append("./nltk_data")  # Add your custom download path (if used)
 
+# Try downloading automatically if missing
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt", download_dir="./nltk_data")
+
+from nltk.tokenize import word_tokenize
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="AI Ticket Classifier", layout="centered", page_icon="🧾")
