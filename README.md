@@ -88,10 +88,12 @@ pip install -r requirements.txt
 
 ## 🧾 Example Output
 
-```txt
+```
+txt
 Epoch: 1, Loss: 0.00385
 Epoch: 2, Loss: 0.00153
 Epoch: 3, Loss: 0.00079
 Accuracy: 0.7969
 Precision (per class): [0.62, 0.76, 0.80, 0.87, 0.95]
 Recall (per class):    [0.73, 0.71, 0.88, 0.79, 0.84]
+```
