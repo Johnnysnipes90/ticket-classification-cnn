@@ -76,7 +76,8 @@ def pad_input(tokens, seq_len=50):
 def preprocess(text):
     tokens = re.findall(r"\w+", text.lower())  # Replace nltk.word_tokenize
     token_ids = [word2idx.get(token, 0) for token in tokens]
-    return torch.tensor([pad_input(token_ids)], dtype=torch.long)
+    return torch.tensor(pad_input(token_ids), dtype=torch.long).unsqueeze(0)
+
 
 # --- MAIN INTERFACE ---
 st.markdown("### 💬 Enter Ticket Text")
