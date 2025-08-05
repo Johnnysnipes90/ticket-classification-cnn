@@ -9,22 +9,15 @@ import numpy as np
 import nltk
 from nltk.tokenize import word_tokenize
 import plotly.express as px
-import os
 
-# --- Ensure 'punkt' tokenizer is available ---
-NLTK_DIR = "nltk_data"
-nltk.data.path.append(NLTK_DIR)
-
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt", download_dir=NLTK_DIR)
+# --- Tell NLTK to use local punkt tokenizer ---
+nltk.data.path.insert(0, "nltk_data")  # Add your ./nltk_data first in search path
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="AI Ticket Classifier", layout="centered", page_icon="🧾")
 
 # --- STYLING ---
-custom_css = """
+st.markdown("""
 <style>
     .stButton > button {
         background-color: #4CAF50;
@@ -39,8 +32,7 @@ custom_css = """
         font-size: 16px;
     }
 </style>
-"""
-st.markdown(custom_css, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # --- HEADER ---
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>🧾 Service Desk Ticket Classifier</h1>", unsafe_allow_html=True)
