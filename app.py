@@ -4,11 +4,17 @@ import streamlit as st
 import json
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional as F   
 import numpy as np
 import nltk
 from nltk.tokenize import word_tokenize
 import plotly.express as px
+
+# Make sure punkt is available
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt", quiet=True)
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="AI Ticket Classifier", layout="centered", page_icon="🧾")
