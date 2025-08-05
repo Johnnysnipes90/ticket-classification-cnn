@@ -52,7 +52,7 @@ git clone https://github.com/yourusername/ticket-classifier-cnn.git
 cd ticket-classifier-cnn
 pip install -r requirements.txt
 streamlit run app.py
-
+```
 
 
 2. 🐍 requirements.txt (Dependencies)
@@ -89,7 +89,6 @@ pip install -r requirements.txt
 ## 🧾 Example Output
 
 ```txt
-```
 Epoch: 1, Loss: 0.00385
 Epoch: 2, Loss: 0.00153
 Epoch: 3, Loss: 0.00079
